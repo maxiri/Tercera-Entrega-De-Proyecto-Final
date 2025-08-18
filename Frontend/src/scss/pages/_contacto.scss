@@ -1,0 +1,87 @@
+.contacto-container {
+  max-width: 550px;
+  margin: 40px auto;
+  padding: 30px 20px;
+  background-color: #fafafa;
+  border: 1px solid #e0e0e0;
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+
+  h1 {
+    text-align: center;
+    color: #048b7b;
+    margin-bottom: 25px;
+  }
+
+  form {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+
+    label {
+      display: flex;
+      flex-direction: column;
+      font-weight: 600;
+      color: #333;
+      font-size: 0.95rem;
+
+      input,
+      textarea {
+        margin-top: 6px;
+        padding: 10px 12px;
+        border: 1px solid #ccc;
+        border-radius: 6px;
+        font-size: 0.95rem;
+        transition: border-color 0.3s, box-shadow 0.3s;
+
+        &:focus {
+          border-color: #048b7b;
+          box-shadow: 0 0 0 3px rgba(4, 139, 123, 0.15);
+          outline: none;
+        }
+
+        &.error {
+          border-color: red;
+        }
+      }
+
+      textarea {
+        resize: vertical;
+        min-height: 100px;
+      }
+
+      .error-text {
+        color: red;
+        font-size: 0.85rem;
+        margin-top: 4px;
+      }
+    }
+
+    button {
+      padding: 12px;
+      background-color: #048b7b;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      font-weight: 600;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: background-color 0.3s, transform 0.2s;
+
+      &:hover {
+        background-color: #036a60;
+        transform: translateY(-2px);
+      }
+    }
+  }
+
+  .success-message {
+    margin-top: 20px;
+    text-align: center;
+    color: #048b7b;
+    font-weight: 600;
+    background-color: rgba(4, 139, 123, 0.1);
+    padding: 10px;
+    border-radius: 6px;
+  }
+}

@@ -1,0 +1,36 @@
+@use 'abstracts/variables' as v;
+@use 'base/reset';
+@use 'base/global';
+@use 'base/components/buttons';
+@use 'base/components/cards';
+@use 'base/components/modal';
+@use 'base/components/header';
+@use 'base/components/form';
+@use 'base/components/toast';
+@use 'pages/home';
+@use 'pages/alta';
+;
+
+html, body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+.app-container {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.main-content {
+  flex: 1;
+  
+}
+
+footer {
+  background-color: #048b7b;
+  color: #fff;
+  text-align: center;
+  padding: 12px 20px;
+}

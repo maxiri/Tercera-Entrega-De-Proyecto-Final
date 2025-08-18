@@ -1,0 +1,169 @@
+@use '../../abstracts/variables' as v;
+@use "sass:color";
+
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.4);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: v.$z-index-modal;
+}
+
+.cart-modal {
+  background: #fff;
+  padding: v.$spacing-lg;
+  border-radius: v.$border-radius;
+  max-width: 600px;
+  width: 90%;
+  box-shadow: v.$box-shadow;
+  overflow-y: auto;
+  max-height: 90vh;
+  animation: fadeIn 0.3s ease-out;
+
+  h2 {
+    margin-top: 0;
+    color: v.$primary-color;
+    text-align: center;
+  }
+
+  h3 {
+    margin-top: v.$spacing-md;
+    text-align: right;
+    color: v.$secondary-color;
+  }
+
+  .close-btn {
+    background: transparent;
+    border: none;
+    color: v.$gray-dark;
+    font-size: 20px;
+    position: absolute;
+    top: v.$spacing-md;
+    right: v.$spacing-md;
+    cursor: pointer;
+    transition: transform 0.2s;
+
+    &:hover {
+      transform: rotate(90deg);
+      color: v.$primary-color;
+    }
+  }
+
+  .cart-item {
+    display: flex;
+    gap: v.$spacing-md;
+    border-bottom: 1px solid v.$gray-light;
+    padding: v.$spacing-sm 0;
+
+    img {
+      width: 80px;
+      height: 80px;
+      object-fit: cover;
+      border-radius: v.$border-radius;
+    }
+
+    div {
+      flex: 1;
+
+      h4 {
+        margin: 0 0 v.$spacing-xs 0;
+      }
+
+      p {
+        margin: 2px 0;
+        font-size: 14px;
+        color: v.$gray-dark;
+      }
+
+      .quantity-controls {
+        display: flex;
+        align-items: center;
+        margin-top: v.$spacing-xs;
+
+        button {
+          background-color: v.$primary-color;
+          color: white;
+          border: none;
+          padding: 4px 8px;
+          border-radius: 4px;
+          cursor: pointer;
+          transition: background-color 0.2s;
+
+          &:hover {
+            background-color: color.adjust(v.$primary-color, $lightness: -10%);
+          }
+        }
+
+        input {
+          width: 50px;
+          text-align: center;
+          margin: 0 v.$spacing-xs;
+          padding: 4px;
+          border: 1px solid v.$gray-light;
+          border-radius: 4px;
+        }
+      }
+
+      .delete-btn {
+        margin-top: v.$spacing-xs;
+        background-color: red;
+        color: white;
+        border: none;
+        padding: 4px 8px;
+        border-radius: 4px;
+        cursor: pointer;
+        transition: background-color 0.2s;
+
+        &:hover {
+          background-color: color.adjust(red, $lightness: -10%);
+        }
+      }
+    }
+  }
+
+  .clear-btn,
+  .buy-btn {
+    margin-top: v.$spacing-sm;
+    width: 100%;
+    padding: v.$spacing-sm;
+    border: none;
+    border-radius: v.$border-radius;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+
+    &.clear-btn {
+      background-color: v.$gray-dark;
+      color: white;
+
+      &:hover {
+        background-color: color.adjust(v.$gray-dark, $lightness: -10%);
+      }
+    }
+
+    &.buy-btn {
+      background-color: v.$primary-color;
+      color: white;
+
+      &:hover {
+        background-color: color.adjust(v.$primary-color, $lightness: -10%);
+      }
+    }
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

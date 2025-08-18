@@ -1,0 +1,19 @@
+@use '../../abstracts/variables' as v;
+
+header {
+  background-color: v.$primary-color;
+  color: white;
+  padding: 10px 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  nav a {
+    margin-right: 12px;
+    font-weight: bold;
+
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+}

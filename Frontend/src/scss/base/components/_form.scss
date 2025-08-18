@@ -1,0 +1,32 @@
+@use '../../abstracts/variables' as v;
+
+form {
+  background: white;
+  padding: 20px;
+  border-radius: v.$border-radius;
+  box-shadow: v.$box-shadow;
+  max-width: 500px;
+  margin: auto;
+
+  label {
+    display: block;
+    margin-bottom: 10px;
+
+    input, textarea {
+      width: 100%;
+      padding: 8px;
+      border: 1px solid v.$gray-medium;
+      border-radius: v.$border-radius;
+      margin-top: 4px;
+    }
+  }
+
+  button {
+    margin-top: 12px;
+  }
+
+  span {
+    color: red;
+    font-size: 0.9em;
+  }
+}
