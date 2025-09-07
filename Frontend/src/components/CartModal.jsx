@@ -1,22 +1,29 @@
-import React, { useContext, useEffect } from 'react';
-import { ProductContext } from '../context/ProductContext';
-import '../scss/base/components/_cartmodal.scss';
+import React, { useEffect } from "react";
+import { useCartContext } from "../context/CartContext";
+import "../scss/base/components/_cartmodal.scss";
 
 const CartModal = () => {
-  const { cart, setCart, isCartOpen, toggleCart, finalizePurchase, setToastMessage } = useContext(ProductContext);
+  const {
+    cart,
+    setCart,
+    isCartOpen,
+    toggleCart,
+    finalizePurchase,
+    setToastMessage,
+  } = useCartContext();
 
   // Guardar carrito en localStorage
   useEffect(() => {
-    localStorage.setItem('cart', JSON.stringify(cart));
+    localStorage.setItem("cart", JSON.stringify(cart));
   }, [cart]);
 
   // Cerrar modal con tecla ESC
   useEffect(() => {
     const handleEsc = (e) => {
-      if (e.key === 'Escape' && isCartOpen) toggleCart();
+      if (e.key === "Escape" && isCartOpen) toggleCart();
     };
-    window.addEventListener('keydown', handleEsc);
-    return () => window.removeEventListener('keydown', handleEsc);
+    window.addEventListener("keydown", handleEsc);
+    return () => window.removeEventListener("keydown", handleEsc);
   }, [toggleCart, isCartOpen]);
 
   const sumQuantity = (id) => {
@@ -74,17 +81,25 @@ const CartModal = () => {
   };
 
   const closeModalOutside = (e) => {
-    if (e.target.className === 'modal-overlay') toggleCart();
+    if (e.target.className === "modal-overlay") toggleCart();
   };
 
-  const totalPrice = cart.reduce((acc, item) => acc + item.precio * item.quantity, 0);
+  const totalPrice = cart.reduce(
+    (acc, item) => acc + item.precio * item.quantity,
+    0
+  );
 
   if (!isCartOpen) return null;
 
   return (
     <div className="modal-overlay" onClick={closeModalOutside}>
       <div className="cart-modal">
-        <button type="button" className="close-btn" onClick={toggleCart} title="Cerrar carrito">
+        <button
+          type="button"
+          className="close-btn"
+          onClick={toggleCart}
+          title="Cerrar carrito"
+        >
           Cerrar ✖️
         </button>
         <h2>Carrito</h2>
@@ -100,7 +115,11 @@ const CartModal = () => {
                   <p>Precio: ${item.precio}</p>
                   <p>Subtotal: ${item.precio * item.quantity}</p>
                   <div className="quantity-controls">
-                    <button type="button" onClick={() => subtractQuantity(item.id)} title="Restar una unidad">
+                    <button
+                      type="button"
+                      onClick={() => subtractQuantity(item.id)}
+                      title="Restar una unidad"
+                    >
                       -
                     </button>
                     <input
@@ -111,11 +130,20 @@ const CartModal = () => {
                       onChange={(e) => updateQuantity(item.id, e.target.value)}
                       title="Cantidad"
                     />
-                    <button type="button" onClick={() => sumQuantity(item.id)} title="Sumar una unidad">
+                    <button
+                      type="button"
+                      onClick={() => sumQuantity(item.id)}
+                      title="Sumar una unidad"
+                    >
                       +
                     </button>
                   </div>
-                  <button type="button" className="delete-btn" onClick={() => removeFromCart(item.id)} title="Eliminar producto">
+                  <button
+                    type="button"
+                    className="delete-btn"
+                    onClick={() => removeFromCart(item.id)}
+                    title="Eliminar producto"
+                  >
                     Eliminar ❌
                   </button>
                 </div>
@@ -123,10 +151,20 @@ const CartModal = () => {
             ))}
             <hr />
             <h3>Total: ${totalPrice}</h3>
-            <button type="button" className="clear-btn" onClick={clearCart} title="Vaciar todo el carrito">
+            <button
+              type="button"
+              className="clear-btn"
+              onClick={clearCart}
+              title="Vaciar todo el carrito"
+            >
               Vaciar carrito
             </button>
-            <button type="button" className="buy-btn" onClick={finalizePurchase} title="Finalizar y confirmar compra">
+            <button
+              type="button"
+              className="buy-btn"
+              onClick={finalizePurchase}
+              title="Finalizar y confirmar compra"
+            >
               Finalizar compra 🛒
             </button>
           </>

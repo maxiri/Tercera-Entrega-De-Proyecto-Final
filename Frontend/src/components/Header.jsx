@@ -1,12 +1,14 @@
-import { Link } from 'react-router-dom';
-import React, { useContext } from 'react';
-import { ProductContext } from '../context/ProductContext';
+import { Link } from "react-router-dom";
+import React from "react";
+import { useCartContext } from "../context/CartContext"; // 👈 ahora usamos CartContext
+import { useProductContext } from "../context/ProductContext"; // 👈 para búsqueda
 
 const Header = () => {
-  const { toggleCart, cart, searchTerm, setSearchTerm } = useContext(ProductContext);
+  const { toggleCart, cart } = useCartContext(); // carrito desde CartContext
+  const { searchTerm, setSearchTerm } = useProductContext(); // búsqueda desde ProductContext
 
   const handleSearchChange = (e) => {
-    setSearchTerm(e.target.value); 
+    setSearchTerm(e.target.value);
   };
 
   return (
@@ -20,9 +22,18 @@ const Header = () => {
         <Link to="/alta" style={styles.link}>Alta</Link>
         <Link to="/contacto" style={styles.link}>Contacto</Link>
 
+        {/* Buscador */}
+        <input
+          type="text"
+          placeholder="Buscar productos..."
+          value={searchTerm}
+          onChange={handleSearchChange}
+          style={styles.searchInput}
+        />
 
+        {/* Carrito */}
         <button type="button" onClick={toggleCart} style={styles.cartButton}>
-          🛒 ({cart.reduce((acc, item) => acc + item.quantity, 0)})
+          🛒 ({(cart || []).reduce((acc, item) => acc + item.quantity, 0)})
         </button>
       </nav>
     </header>
@@ -31,39 +42,39 @@ const Header = () => {
 
 const styles = {
   header: {
-    padding: '10px 20px',
-    backgroundColor: '#048b7b',
-    color: '#fff',
-    display: 'flex',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    flexWrap: 'wrap',
+    padding: "10px 20px",
+    backgroundColor: "#048b7b",
+    color: "#fff",
+    display: "flex",
+    justifyContent: "space-between",
+    alignItems: "center",
+    flexWrap: "wrap",
   },
   title: {
     margin: 0,
   },
   nav: {
-    display: 'flex',
-    gap: '12px',
-    alignItems: 'center',
-    flexWrap: 'wrap',
+    display: "flex",
+    gap: "12px",
+    alignItems: "center",
+    flexWrap: "wrap",
   },
   link: {
-    color: '#fff',
-    textDecoration: 'none',
+    color: "#fff",
+    textDecoration: "none",
   },
   searchInput: {
-    padding: '5px 10px',
-    borderRadius: '5px',
-    border: 'none',
-    outline: 'none',
+    padding: "5px 10px",
+    borderRadius: "5px",
+    border: "none",
+    outline: "none",
   },
   cartButton: {
-    background: 'transparent',
-    border: 'none',
-    color: '#fff',
-    fontSize: '16px',
-    cursor: 'pointer',
+    background: "transparent",
+    border: "none",
+    color: "#fff",
+    fontSize: "16px",
+    cursor: "pointer",
   },
 };
 

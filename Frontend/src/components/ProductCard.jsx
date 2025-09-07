@@ -1,10 +1,10 @@
 // src/components/ProductCard.jsx
-import React, { useContext } from "react";
-import { ProductContext } from "../context/ProductContext";
+import React from "react";
+import { useCartContext } from "../context/CartContext"; 
 import "../scss/base/components/_card.scss";
 
 const ProductCard = ({ product }) => {
-  const { addToCart } = useContext(ProductContext);
+  const { addToCart } = useCartContext();
 
   return (
     <div className="card">

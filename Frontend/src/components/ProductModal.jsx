@@ -1,10 +1,10 @@
 // src/components/ProductModal.jsx
-import React, { useContext } from "react";
-import { ProductContext } from "../context/ProductContext";
+import React from "react";
+import { useCartContext } from "../context/CartContext"; 
 import "../scss/base/components/_ProductModal.scss";
 
 const ProductModal = ({ product, onClose }) => {
-  const { addToCart } = useContext(ProductContext);
+  const { addToCart } = useCartContext();
 
   if (!product) return null;
 
