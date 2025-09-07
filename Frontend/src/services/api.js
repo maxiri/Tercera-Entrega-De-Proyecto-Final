@@ -1,3 +1,4 @@
+// src/services/api.js
 const API_BASE = import.meta.env.VITE_API_BASE || "http://localhost:5000";
 
 export const fetchProducts = async () => {
@@ -12,7 +13,10 @@ export const createProduct = async (product) => {
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(product),
   });
-  if (!res.ok) throw new Error("Error al crear producto");
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({ message: "Error al crear producto" }));
+    throw new Error(err.message || "Error al crear producto");
+  }
   return await res.json();
 };
 
@@ -22,14 +26,20 @@ export const updateProduct = async (id, data) => {
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(data),
   });
-  if (!res.ok) throw new Error("Error al actualizar producto");
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({ message: "Error al actualizar producto" }));
+    throw new Error(err.message || "Error al actualizar producto");
+  }
   return await res.json();
 };
 
 export const deleteProduct = async (id) => {
   const res = await fetch(`${API_BASE}/api/products/${id}`, { method: "DELETE" });
-  if (!res.ok) throw new Error("Error al eliminar producto");
-  return true;
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({ message: "Error al eliminar producto" }));
+    throw new Error(err.message || "Error al eliminar producto");
+  }
+  return { success: true };
 };
 
 export const sendCart = async (items, customer = {}) => {
@@ -38,6 +48,9 @@ export const sendCart = async (items, customer = {}) => {
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ items, customer }),
   });
-  if (!res.ok) throw new Error("Error al enviar carrito");
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({ message: "Error al enviar carrito" }));
+    throw new Error(err.message || "Error al enviar carrito");
+  }
   return await res.json();
 };

@@ -1,35 +1,26 @@
-import React, { useContext } from 'react';
-import { ProductContext } from '../context/ProductContext';
+// src/components/ProductCard.jsx
+import React, { useContext } from "react";
+import { ProductContext } from "../context/ProductContext";
+import "../scss/base/components/_card.scss";
 
 const ProductCard = ({ product }) => {
   const { addToCart } = useContext(ProductContext);
 
   return (
-    <div style={styles.card}>
-      <img src={product.foto} alt={product.nombre} style={styles.img} />
+    <div className="card">
+      <img
+        src={product.foto || "https://placehold.co/150x150?text=Sin+imagen"}
+        alt={product.nombre}
+        onError={(e) => {
+          e.target.onerror = null;
+          e.target.src = "https://placehold.co/150x150?text=Sin+imagen";
+        }}
+      />
       <h3>{product.nombre}</h3>
       <p>Precio: ${product.precio}</p>
       <button onClick={() => addToCart(product)}>Agregar al carrito 🛒</button>
     </div>
   );
-  
-};
-
-
-const styles = {
-  card: {
-    border: '1px solid #ccc',
-    padding: '16px',
-    width: '200px',
-    margin: '8px',
-    textAlign: 'center'
-  },
-  img: {
-    width: '100%',
-    height: '150px',
-    objectFit: 'cover'
-  }
-  
 };
 
 export default ProductCard;

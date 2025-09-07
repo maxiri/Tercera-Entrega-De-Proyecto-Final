@@ -1,23 +1,50 @@
-import React from 'react';
-import '../scss/base/components/_ProductModal.scss'; 
+// src/components/ProductModal.jsx
+import React, { useContext } from "react";
+import { ProductContext } from "../context/ProductContext";
+import "../scss/base/components/_ProductModal.scss";
 
-const ProductModal = ({ product, onClose, onAddToCart }) => {
-  if (!product) return null; 
+const ProductModal = ({ product, onClose }) => {
+  const { addToCart } = useContext(ProductContext);
+
+  if (!product) return null;
 
   return (
     <div
-      className="modal-overlay"
-      onClick={(e) => e.target.className === 'modal-overlay' && onClose()}
+      className="product-modal-overlay"
+      onClick={(e) => {
+        if (e.target.className === "product-modal-overlay" && onClose) onClose();
+      }}
     >
-      <div className="modal-content">
-        <button className="close-btn" onClick={onClose}>✖️</button>
-        <img src={product.foto} alt={product.nombre} className="modal-image" />
-        <h2>{product.nombre}</h2>
-        <p className="long-description">
-          {product.descripcionLarga || product.descripcionCorta}
+      <div className="product-modal-content" role="dialog" aria-modal="true">
+        <button className="modal-close" onClick={onClose} aria-label="Cerrar">
+          ✖️
+        </button>
+
+        <img
+          src={product.foto || "https://placehold.co/400x250?text=Sin+imagen"}
+          alt={product.nombre}
+          className="modal-image"
+          onError={(e) => {
+            e.target.onerror = null;
+            e.target.src = "https://placehold.co/400x250?text=Sin+imagen";
+          }}
+        />
+
+        <h2 className="modal-title">{product.nombre}</h2>
+        <p className="modal-description">
+          {product.descripcionLarga || product.descripcionCorta || ""}
         </p>
-        <p><strong>Precio: ${product.precio}</strong></p>
-        <button className="add-btn" onClick={onAddToCart}>Agregar al carrito 🛒</button>
+
+        <p className="modal-price">
+          <strong>Precio: ${product.precio}</strong>
+        </p>
+
+        <button
+          className="modal-add-to-cart"
+          onClick={() => addToCart(product)}
+        >
+          Agregar al carrito 🛒
+        </button>
       </div>
     </div>
   );

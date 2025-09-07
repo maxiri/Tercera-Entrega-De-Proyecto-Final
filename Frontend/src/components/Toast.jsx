@@ -8,16 +8,12 @@ const Toast = () => {
   useEffect(() => {
     if (toastMessage) {
       setShow(true);
-
       const timer = setTimeout(() => {
         setShow(false);
-        // Limpio el mensaje cuando termine la animación
-        setTimeout(() => setToastMessage(''), 300); 
+        setTimeout(() => setToastMessage(''), 300); // limpiar mensaje tras animación
       }, 2000);
 
-      return () => {
-        clearTimeout(timer);
-      };
+      return () => clearTimeout(timer);
     }
   }, [toastMessage, setToastMessage]);
 
@@ -37,7 +33,7 @@ const Toast = () => {
         opacity: show ? 1 : 0,
         visibility: show ? 'visible' : 'hidden',
         transition: 'opacity 0.3s ease',
-        pointerEvents: show ? 'auto' : 'none', // evita que interfiera cuando invisible
+        pointerEvents: show ? 'auto' : 'none',
       }}
     >
       {toastMessage}

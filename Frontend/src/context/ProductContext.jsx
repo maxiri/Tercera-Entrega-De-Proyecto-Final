@@ -1,102 +1,139 @@
-import React, { createContext, useState, useEffect, useRef } from 'react';
+// src/context/ProductContext.jsx
+import React, { createContext, useEffect, useRef, useState } from "react";
+import * as api from "../services/api";
 
 export const ProductContext = createContext();
-export const useProductContext = () => React.useContext(ProductContext); // <-- ✅ Añadido
+export const useProductContext = () => React.useContext(ProductContext);
 
 export const ProductProvider = ({ children }) => {
   const [products, setProducts] = useState([]);
   const [cart, setCart] = useState(() => {
-    const storedCart = localStorage.getItem('cart');
-    return storedCart ? JSON.parse(storedCart) : [];
+    try {
+      const stored = localStorage.getItem("cart");
+      return stored ? JSON.parse(stored) : [];
+    } catch {
+      return [];
+    }
   });
-  const [toastMessage, setToastMessage] = useState('');
+  const [toastMessage, setToastMessage] = useState("");
   const [isCartOpen, setIsCartOpen] = useState(false);
-  const [searchTerm, setSearchTerm] = useState('');
+  const [searchTerm, setSearchTerm] = useState("");
 
   const toastTimeoutRef = useRef(null);
 
-  useEffect(() => {
-    const fetchProducts = async () => {
-      try {
-        const res = await fetch('https://686ee02191e85fac429f37e2.mockapi.io/Productos');
-        const data = await res.json();
-        setProducts(data);
-      } catch (error) {
-        console.error('Error al obtener productos', error);
-      }
-    };
-    fetchProducts();
-  }, []);
+  // Cargar productos desde backend
+  const loadProducts = async () => {
+    try {
+      const data = await api.fetchProducts();
+      // mapear _id => id para homogeneizar el frontend
+      const normalized = data.map((p) => ({
+        ...p,
+        id: p._id || p.id,
+      }));
+      setProducts(normalized);
+    } catch (err) {
+      console.error("Error al obtener productos:", err);
+      setProducts([]);
+    }
+  };
 
   useEffect(() => {
-    localStorage.setItem('cart', JSON.stringify(cart));
+    loadProducts();
+  }, []);
+
+  // Persistencia carrito
+  useEffect(() => {
+    try {
+      localStorage.setItem("cart", JSON.stringify(cart));
+    } catch {}
   }, [cart]);
 
   const addToCart = (product) => {
-    let message = '';
+    if (!product) return;
+    let message = "";
 
-    setCart((prevCart) => {
-      const existing = prevCart.find((item) => item.id === product.id);
-
+    setCart((prev) => {
+      const existing = prev.find((it) => it.id === product.id);
       if (existing) {
-        if (existing.quantity + 1 > product.stock) {
+        if (existing.quantity + 1 > (product.stock ?? 999999)) {
           message = `No hay suficiente stock de ${product.nombre}`;
-          return prevCart;
+          return prev;
         }
         message = `${product.nombre} agregado al carrito`;
-        return prevCart.map((item) =>
-          item.id === product.id
-            ? { ...item, quantity: item.quantity + 1 }
-            : item
-        );
+        return prev.map((it) => (it.id === product.id ? { ...it, quantity: it.quantity + 1 } : it));
       } else {
-        if (product.stock < 1) {
+        if ((product.stock ?? 1) < 1) {
           message = `No hay stock disponible de ${product.nombre}`;
-          return prevCart;
+          return prev;
         }
         message = `${product.nombre} agregado al carrito`;
-        return [...prevCart, { ...product, quantity: 1 }];
+        return [...prev, { ...product, quantity: 1 }];
       }
     });
 
-    if (toastTimeoutRef.current) {
-      clearTimeout(toastTimeoutRef.current);
-    }
-
+    if (toastTimeoutRef.current) clearTimeout(toastTimeoutRef.current);
     setToastMessage(message);
-
     toastTimeoutRef.current = setTimeout(() => {
-      setToastMessage('');
+      setToastMessage("");
       toastTimeoutRef.current = null;
     }, 2000);
   };
 
   const deleteProduct = async (id) => {
     try {
-      const res = await fetch(`https://686ee02191e85fac429f37e2.mockapi.io/Productos/${id}`, {
-        method: 'DELETE',
-      });
-      if (!res.ok) throw new Error('Error al eliminar producto');
+      await api.deleteProduct(id);
       setProducts((prev) => prev.filter((p) => p.id !== id));
-    } catch (error) {
-      console.error(error);
+    } catch (err) {
+      console.error("Error al eliminar producto:", err);
+      throw err;
     }
   };
 
-  const updateProduct = (updatedProduct) => {
-    setProducts((prev) =>
-      prev.map((p) => (p.id === updatedProduct.id ? updatedProduct : p))
-    );
+  const updateProduct = async (id, updatedProduct) => {
+    try {
+      const updated = await api.updateProduct(id, updatedProduct);
+      // normalized _id -> id
+      const normalized = { ...updated, id: updated._id || updated.id };
+      setProducts((prev) => prev.map((p) => (p.id === id ? normalized : p)));
+      return normalized;
+    } catch (err) {
+      console.error("Error al actualizar producto:", err);
+      throw err;
+    }
   };
 
-  const toggleCart = () => {
-    setIsCartOpen(!isCartOpen);
+  const createProduct = async (productData) => {
+    try {
+      const saved = await api.createProduct(productData);
+      const normalized = { ...saved, id: saved._id || saved.id };
+      setProducts((prev) => [...prev, normalized]);
+      return normalized;
+    } catch (err) {
+      console.error("Error al crear producto:", err);
+      throw err;
+    }
   };
 
-  const finalizePurchase = () => {
-    setCart([]);
-    setToastMessage('¡Gracias por tu compra!');
-    setIsCartOpen(false);
+  const toggleCart = () => setIsCartOpen((v) => !v);
+
+  const finalizePurchase = async (customer = {}) => {
+    // esperar a enviar carrito al backend (ruta /api/cart)
+    try {
+      const items = cart.map((it) => ({
+        productId: it.id, // cart model expects ObjectId referencing products
+        nombre: it.nombre,
+        precio: it.precio,
+        quantity: it.quantity,
+      }));
+      const res = await api.sendCart(items, customer);
+      setCart([]);
+      setToastMessage("Compra registrada. Gracias!");
+      console.log("Carrito guardado:", res);
+    } catch (err) {
+      console.error("Error al enviar carrito:", err);
+      setToastMessage("Error al finalizar compra");
+      throw err;
+    }
   };
 
   return (
@@ -109,6 +146,7 @@ export const ProductProvider = ({ children }) => {
         addToCart,
         deleteProduct,
         updateProduct,
+        createProduct,
         isCartOpen,
         toggleCart,
         toastMessage,
@@ -116,6 +154,7 @@ export const ProductProvider = ({ children }) => {
         finalizePurchase,
         searchTerm,
         setSearchTerm,
+        reloadProducts: loadProducts,
       }}
     >
       {children}
