@@ -1,9 +1,8 @@
 // src/pages/Alta.jsx
 import React, { useContext, useEffect, useState } from "react";
 import { ProductContext } from "../context/ProductContext";
+import { useToast } from "../context/ToastContext";
 import "../scss/pages/_alta.scss";
-import { toast } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
 
 const initialForm = {
   id: "",
@@ -22,7 +21,10 @@ const initialForm = {
 };
 
 const Alta = () => {
-  const { products, setProducts, createProduct, updateProduct, deleteProduct } = useContext(ProductContext);
+  const { products, createProduct, updateProduct, deleteProduct } =
+    useContext(ProductContext);
+  const { showToast } = useToast();
+
   const [form, setForm] = useState(() => {
     const saved = localStorage.getItem("formAlta");
     return saved ? JSON.parse(saved) : initialForm;
@@ -41,19 +43,27 @@ const Alta = () => {
         if (!value || !String(value).trim()) return "El nombre es obligatorio";
         break;
       case "descripcionCorta":
-        if (!value || !String(value).trim()) return "La descripción corta es obligatoria";
+        if (!value || !String(value).trim())
+          return "La descripción corta es obligatoria";
         break;
       case "precio":
-        if (value === "" || isNaN(value) || Number(value) <= 0) return "Debe ser un número positivo";
+        if (value === "" || isNaN(value) || Number(value) <= 0)
+          return "Debe ser un número positivo";
         break;
       case "stock":
-        if (value !== "" && (isNaN(value) || Number(value) < 0)) return "Debe ser 0 o más";
+        if (value !== "" && (isNaN(value) || Number(value) < 0))
+          return "Debe ser 0 o más";
         break;
       case "categoria":
-        if (!value || !String(value).trim()) return "La categoría es obligatoria";
+        if (!value || !String(value).trim())
+          return "La categoría es obligatoria";
         break;
       case "foto":
-        if (value && !/^https?:\/\/.+\.(jpg|jpeg|png|gif|bmp|webp)$/.test(value)) return "Debe ser una URL válida de imagen";
+        if (
+          value &&
+          !/^https?:\/\/.+\.(jpg|jpeg|png|gif|bmp|webp)$/.test(value)
+        )
+          return "Debe ser una URL válida de imagen";
         break;
       default:
         return "";
@@ -70,7 +80,10 @@ const Alta = () => {
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
-    setForm((prev) => ({ ...prev, [name]: type === "checkbox" ? checked : value }));
+    setForm((prev) => ({
+      ...prev,
+      [name]: type === "checkbox" ? checked : value,
+    }));
   };
 
   const handleEdit = (product) => {
@@ -96,7 +109,6 @@ const Alta = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // Validaciones
     const newErrors = {};
     Object.entries(form).forEach(([key, val]) => {
       const err = validateField(key, val);
@@ -105,7 +117,7 @@ const Alta = () => {
     setErrors(newErrors);
 
     if (Object.keys(newErrors).length > 0) {
-      toast.error("Por favor corrige los errores antes de enviar");
+      showToast("Por favor corrige los errores antes de enviar", "error");
       return;
     }
 
@@ -127,21 +139,20 @@ const Alta = () => {
 
     try {
       if (isEditing && form.id) {
-        const updated = await updateProduct(form.id, payload);
-        toast.success("Producto actualizado con éxito");
+        await updateProduct(form.id, payload);
+        showToast("Producto actualizado con éxito", "success");
       } else {
-        const saved = await createProduct(payload);
-        toast.success("Producto agregado con éxito");
+        await createProduct(payload);
+        showToast("Producto agregado con éxito", "success");
       }
 
-      // Reset
       setForm(initialForm);
       setIsEditing(false);
       setErrors({});
       localStorage.removeItem("formAlta");
     } catch (err) {
       console.error(err);
-      toast.error(err.message || "Error al guardar producto");
+      showToast(err.message || "Error al guardar producto", "error");
     } finally {
       setLoading(false);
     }
@@ -168,27 +179,48 @@ const Alta = () => {
           <label key={name}>
             {label}:
             {isTextArea ? (
-              <textarea name={name} value={form[name]} onChange={handleChange} onBlur={handleBlur} />
+              <textarea
+                name={name}
+                value={form[name]}
+                onChange={handleChange}
+                onBlur={handleBlur}
+              />
             ) : (
-              <input name={name} type={type} value={form[name]} onChange={handleChange} onBlur={handleBlur} />
+              <input
+                name={name}
+                type={type}
+                value={form[name]}
+                onChange={handleChange}
+                onBlur={handleBlur}
+              />
             )}
             {errors[name] && <span className="error">{errors[name]}</span>}
           </label>
         ))}
 
         <label style={{ display: "flex", alignItems: "center", gap: 8 }}>
-          <input name="envioGratis" type="checkbox" checked={form.envioGratis} onChange={handleChange} />
+          <input
+            name="envioGratis"
+            type="checkbox"
+            checked={form.envioGratis}
+            onChange={handleChange}
+          />
           Envío gratis
         </label>
 
-        {form.foto && /^https?:\/\/.+\.(jpg|jpeg|png|gif|bmp|webp)$/.test(form.foto) && (
-          <div className="preview-image">
-            <img src={form.foto} alt="Preview" style={{ maxWidth: 200 }} />
-          </div>
-        )}
+        {form.foto &&
+          /^https?:\/\/.+\.(jpg|jpeg|png|gif|bmp|webp)$/.test(form.foto) && (
+            <div className="preview-image">
+              <img src={form.foto} alt="Preview" style={{ maxWidth: 200 }} />
+            </div>
+          )}
 
         <button type="submit" disabled={loading}>
-          {loading ? "Enviando..." : isEditing ? "Actualizar Producto" : "Agregar Producto"}
+          {loading
+            ? "Enviando..."
+            : isEditing
+            ? "Actualizar Producto"
+            : "Agregar Producto"}
         </button>
       </form>
 
@@ -205,9 +237,9 @@ const Alta = () => {
                 if (confirm("¿Eliminar producto?")) {
                   try {
                     await deleteProduct(prod.id);
-                    toast.success("Producto eliminado");
+                    showToast("Producto eliminado", "success");
                   } catch {
-                    toast.error("Error al eliminar");
+                    showToast("Error al eliminar", "error");
                   }
                 }
               }}

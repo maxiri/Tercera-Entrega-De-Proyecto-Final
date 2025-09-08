@@ -22,14 +22,6 @@ const Header = () => {
         <Link to="/alta" style={styles.link}>Alta</Link>
         <Link to="/contacto" style={styles.link}>Contacto</Link>
 
-        {/* Buscador */}
-        <input
-          type="text"
-          placeholder="Buscar productos..."
-          value={searchTerm}
-          onChange={handleSearchChange}
-          style={styles.searchInput}
-        />
 
         {/* Carrito */}
         <button type="button" onClick={toggleCart} style={styles.cartButton}>

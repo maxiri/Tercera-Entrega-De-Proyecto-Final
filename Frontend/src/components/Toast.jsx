@@ -1,41 +1,28 @@
-import React, { useContext, useEffect, useState } from 'react';
-import { ProductContext } from '../context/ProductContext';
+// src/components/Toast.jsx
+import React, { useEffect, useState } from "react";
+import { useCartContext } from "../context/CartContext";
+import "../scss/base/components/_toast.scss";
 
 const Toast = () => {
-  const { toastMessage, setToastMessage } = useContext(ProductContext);
-  const [show, setShow] = useState(false);
+  const { toastMessage, setToastMessage, toastType } = useCartContext();
+  const [visible, setVisible] = useState(false);
 
   useEffect(() => {
     if (toastMessage) {
-      setShow(true);
+      setVisible(true);
       const timer = setTimeout(() => {
-        setShow(false);
-        setTimeout(() => setToastMessage(''), 300); // limpiar mensaje tras animación
-      }, 2000);
+        setVisible(false);
+        setTimeout(() => setToastMessage(""), 300);
+      }, 2800);
 
       return () => clearTimeout(timer);
     }
   }, [toastMessage, setToastMessage]);
 
-  if (!toastMessage && !show) return null;
+  if (!toastMessage && !visible) return null;
 
   return (
-    <div
-      style={{
-        position: 'fixed',
-        bottom: '20px',
-        right: '20px',
-        background: '#333',
-        color: '#fff',
-        padding: '10px 20px',
-        borderRadius: '5px',
-        zIndex: 9999,
-        opacity: show ? 1 : 0,
-        visibility: show ? 'visible' : 'hidden',
-        transition: 'opacity 0.3s ease',
-        pointerEvents: show ? 'auto' : 'none',
-      }}
-    >
+    <div className={`toast ${toastType} ${visible ? "show" : "hide"}`}>
       {toastMessage}
     </div>
   );

@@ -1,19 +1,30 @@
-@use '../../abstracts/variables' as v;
-
+// src/scss/base/components/_toast.scss
+@use "../../abstracts/variables" as v;
 
 .toast {
   position: fixed;
   bottom: 20px;
   right: 20px;
-  background: v.$accent-color;
-  color: white;
-  padding: 10px 20px;
+  padding: 12px 24px;
   border-radius: v.$border-radius;
+  font-weight: 500;
   box-shadow: v.$box-shadow;
   z-index: v.$z-index-modal;
-  opacity: 0.95;
-  font-weight: 500;
   animation: fadeSlideIn 0.4s ease forwards;
+  opacity: 0.95;
+
+  &-success {
+    background: #28a745;
+    color: #fff;
+  }
+  &-error {
+    background: #dc3545;
+    color: #fff;
+  }
+  &-info {
+    background: #17a2b8;
+    color: #fff;
+  }
 }
 
 @keyframes fadeSlideIn {
@@ -26,4 +37,3 @@
     transform: translateY(0);
   }
 }
-
