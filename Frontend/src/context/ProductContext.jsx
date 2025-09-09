@@ -1,4 +1,4 @@
-// src/context/ProductContext.jsx
+
 import React, { createContext, useState, useEffect } from "react";
 import * as api from "../services/api";
 

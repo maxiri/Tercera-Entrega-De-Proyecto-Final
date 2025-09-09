@@ -1,4 +1,4 @@
-// src/pages/Alta.jsx
+
 import React, { useContext, useEffect, useState } from "react";
 import { ProductContext } from "../context/ProductContext";
 import { useToast } from "../context/ToastContext";

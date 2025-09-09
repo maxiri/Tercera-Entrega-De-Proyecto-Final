@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
 import { useCartContext } from "../context/CartContext";
-import { useToast } from "../context/ToastContext"; // ✅ importar useToast
+import { useToast } from "../context/ToastContext"; 
 import "../scss/base/components/_cartmodal.scss";
 
 const CartModal = () => {
@@ -12,7 +12,7 @@ const CartModal = () => {
     finalizePurchase,
   } = useCartContext();
 
-  const { showToast } = useToast(); // ✅ usar showToast
+  const { showToast } = useToast(); 
 
   // Guardar carrito en localStorage
   useEffect(() => {
@@ -33,7 +33,7 @@ const CartModal = () => {
       prev.map((item) => {
         if (item.id === id) {
           if (item.quantity + 1 > item.stock) {
-            showToast(`No hay suficiente stock de ${item.nombre}`, "error"); // ✅ toast
+            showToast(`No hay suficiente stock de ${item.nombre}`, "error"); 
             return item;
           }
           return { ...item, quantity: item.quantity + 1 };
@@ -64,7 +64,7 @@ const CartModal = () => {
       prev.map((item) => {
         if (item.id === id) {
           if (qty > item.stock) {
-            showToast(`No hay suficiente stock de ${item.nombre}`, "error"); // ✅ toast
+            showToast(`No hay suficiente stock de ${item.nombre}`, "error"); 
             return item;
           }
           return { ...item, quantity: qty };
@@ -76,12 +76,12 @@ const CartModal = () => {
 
   const removeFromCart = (id) => {
     setCart((prev) => prev.filter((item) => item.id !== id));
-    showToast("Producto eliminado del carrito", "warning"); // ✅ toast
+    showToast("Producto eliminado del carrito", "warning"); 
   };
 
   const clearCart = () => {
     setCart([]);
-    showToast("Carrito vaciado", "warning"); // ✅ toast
+    showToast("Carrito vaciado", "warning"); 
   };
 
   const closeModalOutside = (e) => {
@@ -168,7 +168,7 @@ const CartModal = () => {
               className="buy-btn"
               onClick={() => {
                 finalizePurchase();
-                showToast("Compra finalizada con éxito 🎉", "success"); // ✅ toast
+                showToast("Compra finalizada con éxito 🎉", "success"); 
               }}
               title="Finalizar y confirmar compra"
             >

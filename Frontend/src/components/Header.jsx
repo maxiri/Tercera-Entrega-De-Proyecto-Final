@@ -1,11 +1,11 @@
 import { Link } from "react-router-dom";
 import React from "react";
-import { useCartContext } from "../context/CartContext"; // 👈 ahora usamos CartContext
-import { useProductContext } from "../context/ProductContext"; // 👈 para búsqueda
+import { useCartContext } from "../context/CartContext"; 
+import { useProductContext } from "../context/ProductContext"; 
 
 const Header = () => {
-  const { toggleCart, cart } = useCartContext(); // carrito desde CartContext
-  const { searchTerm, setSearchTerm } = useProductContext(); // búsqueda desde ProductContext
+  const { toggleCart, cart } = useCartContext(); 
+  const { searchTerm, setSearchTerm } = useProductContext(); 
 
   const handleSearchChange = (e) => {
     setSearchTerm(e.target.value);

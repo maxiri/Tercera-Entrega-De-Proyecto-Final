@@ -11,7 +11,7 @@ import Contacto from "./pages/Contacto";
 import Header from "./components/Header";
 import Footer from "./components/Footer";
 import Toast from "./components/Toast";
-import CartModal from "./components/CartModal"; // 👈 importar modal
+import CartModal from "./components/CartModal"; 
 
 const App = () => {
   return (
@@ -20,7 +20,7 @@ const App = () => {
         <ProductProvider>
           <CartProvider>
             <Header />
-            <CartModal /> {/* 👈 ahora sí se renderiza el modal */}
+            <CartModal /> {}
             <Routes>
               <Route path="/" element={<Home />} />
               <Route path="/alta" element={<Alta />} />

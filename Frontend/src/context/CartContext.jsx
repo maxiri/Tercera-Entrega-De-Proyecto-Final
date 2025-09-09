@@ -1,4 +1,4 @@
-// src/context/CartContext.jsx
+
 import React, { createContext, useState, useEffect, useRef, useContext } from "react";
 import * as api from "../services/api";
 import { useToast } from "./ToastContext";
@@ -20,7 +20,7 @@ export const CartProvider = ({ children }) => {
   const { showToast } = useToast();
   const toastTimeoutRef = useRef(null);
 
-  // Guardar carrito en localStorage
+  
   useEffect(() => {
     try {
       localStorage.setItem("cart", JSON.stringify(cart));
@@ -59,7 +59,6 @@ export const CartProvider = ({ children }) => {
       }
     });
 
-    // 👇 ejecutamos el toast *después* de actualizar el carrito
     if (message) {
       setTimeout(() => {
         showToast(message, type);

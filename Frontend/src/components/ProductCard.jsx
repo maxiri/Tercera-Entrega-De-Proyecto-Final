@@ -1,4 +1,4 @@
-// src/components/ProductCard.jsx
+
 import React from "react";
 import { useCartContext } from "../context/CartContext"; 
 import "../scss/base/components/_card.scss";
