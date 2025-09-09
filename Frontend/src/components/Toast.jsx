@@ -1,29 +1,33 @@
 // src/components/Toast.jsx
-import React, { useEffect, useState } from "react";
-import { useCartContext } from "../context/CartContext";
-import "../scss/base/components/_toast.scss";
+import React from "react";
+import { useToast } from "../context/ToastContext";
 
 const Toast = () => {
-  const { toastMessage, setToastMessage, toastType } = useCartContext();
-  const [visible, setVisible] = useState(false);
+  const { toast } = useToast();
 
-  useEffect(() => {
-    if (toastMessage) {
-      setVisible(true);
-      const timer = setTimeout(() => {
-        setVisible(false);
-        setTimeout(() => setToastMessage(""), 300);
-      }, 2800);
-
-      return () => clearTimeout(timer);
-    }
-  }, [toastMessage, setToastMessage]);
-
-  if (!toastMessage && !visible) return null;
+  if (!toast.message) return null;
 
   return (
-    <div className={`toast ${toastType} ${visible ? "show" : "hide"}`}>
-      {toastMessage}
+    <div
+      style={{
+        position: "fixed",
+        bottom: "20px",
+        right: "20px",
+        background:
+          toast.type === "success"
+            ? "green"
+            : toast.type === "error"
+            ? "red"
+            : "#333",
+        color: "#fff",
+        padding: "10px 20px",
+        borderRadius: "5px",
+        zIndex: 9999,
+        boxShadow: "0 2px 6px rgba(0,0,0,0.3)",
+        transition: "opacity 0.3s ease",
+      }}
+    >
+      {toast.message}
     </div>
   );
 };

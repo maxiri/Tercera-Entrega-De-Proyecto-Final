@@ -1,5 +1,6 @@
 import React, { useEffect } from "react";
 import { useCartContext } from "../context/CartContext";
+import { useToast } from "../context/ToastContext"; // ✅ importar useToast
 import "../scss/base/components/_cartmodal.scss";
 
 const CartModal = () => {
@@ -9,8 +10,9 @@ const CartModal = () => {
     isCartOpen,
     toggleCart,
     finalizePurchase,
-    setToastMessage,
   } = useCartContext();
+
+  const { showToast } = useToast(); // ✅ usar showToast
 
   // Guardar carrito en localStorage
   useEffect(() => {
@@ -31,7 +33,7 @@ const CartModal = () => {
       prev.map((item) => {
         if (item.id === id) {
           if (item.quantity + 1 > item.stock) {
-            setToastMessage(`No hay suficiente stock de ${item.nombre}`);
+            showToast(`No hay suficiente stock de ${item.nombre}`, "error"); // ✅ toast
             return item;
           }
           return { ...item, quantity: item.quantity + 1 };
@@ -62,7 +64,7 @@ const CartModal = () => {
       prev.map((item) => {
         if (item.id === id) {
           if (qty > item.stock) {
-            setToastMessage(`No hay suficiente stock de ${item.nombre}`);
+            showToast(`No hay suficiente stock de ${item.nombre}`, "error"); // ✅ toast
             return item;
           }
           return { ...item, quantity: qty };
@@ -74,10 +76,12 @@ const CartModal = () => {
 
   const removeFromCart = (id) => {
     setCart((prev) => prev.filter((item) => item.id !== id));
+    showToast("Producto eliminado del carrito", "warning"); // ✅ toast
   };
 
   const clearCart = () => {
     setCart([]);
+    showToast("Carrito vaciado", "warning"); // ✅ toast
   };
 
   const closeModalOutside = (e) => {
@@ -162,7 +166,10 @@ const CartModal = () => {
             <button
               type="button"
               className="buy-btn"
-              onClick={finalizePurchase}
+              onClick={() => {
+                finalizePurchase();
+                showToast("Compra finalizada con éxito 🎉", "success"); // ✅ toast
+              }}
               title="Finalizar y confirmar compra"
             >
               Finalizar compra 🛒

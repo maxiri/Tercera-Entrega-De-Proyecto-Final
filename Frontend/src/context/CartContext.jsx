@@ -1,6 +1,7 @@
 // src/context/CartContext.jsx
 import React, { createContext, useState, useEffect, useRef, useContext } from "react";
 import * as api from "../services/api";
+import { useToast } from "./ToastContext";
 
 export const CartContext = createContext();
 export const useCartContext = () => useContext(CartContext);
@@ -16,8 +17,7 @@ export const CartProvider = ({ children }) => {
   });
 
   const [isCartOpen, setIsCartOpen] = useState(false);
-  const [toastMessage, setToastMessage] = useState("");
-  const [toastType, setToastType] = useState("info"); // success | error | info
+  const { showToast } = useToast();
   const toastTimeoutRef = useRef(null);
 
   // Guardar carrito en localStorage
@@ -27,45 +27,48 @@ export const CartProvider = ({ children }) => {
     } catch {}
   }, [cart]);
 
-  const showToast = (message, type = "info") => {
-    if (toastTimeoutRef.current) clearTimeout(toastTimeoutRef.current);
-    setToastMessage(message);
-    setToastType(type);
-    toastTimeoutRef.current = setTimeout(() => {
-      setToastMessage("");
-      setToastType("info");
-      toastTimeoutRef.current = null;
-    }, 3000);
-  };
-
   const addToCart = (product) => {
     if (!product) return;
 
+    let message = "";
+    let type = "info";
+
     setCart((prev) => {
       const existing = prev.find((it) => it.id === product.id);
+
       if (existing) {
         if (existing.quantity + 1 > (product.stock ?? 999999)) {
-          showToast(`⚠️ No hay suficiente stock de ${product.nombre}`, "error");
+          message = `⚠️ No hay suficiente stock de ${product.nombre}`;
+          type = "error";
           return prev;
         }
-        showToast(`✅ ${product.nombre} agregado al carrito 🛒`, "success");
+        message = `✅ ${product.nombre} agregado al carrito 🛒`;
+        type = "success";
         return prev.map((it) =>
           it.id === product.id ? { ...it, quantity: it.quantity + 1 } : it
         );
       } else {
         if ((product.stock ?? 1) < 1) {
-          showToast(`⚠️ No hay stock disponible de ${product.nombre}`, "error");
+          message = `⚠️ No hay stock disponible de ${product.nombre}`;
+          type = "error";
           return prev;
         }
-        showToast(`✅ ${product.nombre} agregado al carrito 🛒`, "success");
+        message = `✅ ${product.nombre} agregado al carrito 🛒`;
+        type = "success";
         return [...prev, { ...product, quantity: 1 }];
       }
     });
+
+    // 👇 ejecutamos el toast *después* de actualizar el carrito
+    if (message) {
+      setTimeout(() => {
+        showToast(message, type);
+      }, 0);
+    }
   };
 
   const removeFromCart = (id) => {
     setCart((prev) => prev.filter((item) => item.id !== id));
-    showToast("🗑️ Producto eliminado del carrito", "info");
   };
 
   const updateQuantity = (id, quantity) => {
@@ -107,9 +110,6 @@ export const CartProvider = ({ children }) => {
         updateQuantity,
         isCartOpen,
         toggleCart,
-        toastMessage,
-        setToastMessage,
-        toastType,
         finalizePurchase,
       }}
     >
